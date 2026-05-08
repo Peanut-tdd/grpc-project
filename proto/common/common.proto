@@ -1,0 +1,78 @@
+syntax="proto3";
+
+package common;
+
+option go_package="github.com/pbuser/genproto/common";
+
+
+
+message CreateUserRequest{
+
+  string name =1;
+  string phone =2;
+  string address=3;
+  string email=4;
+  string passwd=5;
+}
+
+
+message GetUserInfoRequest {
+  string name=1;
+  string phone=2;
+}
+
+
+message CreateUserResponse{
+  int64 id=1;
+  string name=2;
+  string phone=3;
+}
+
+
+message GetUserResponse{
+  int64 id=1;
+  string name=2;
+  string phone=3;
+}
+
+
+
+
+message SimpleRequest{
+  string data=1;
+}
+
+
+message StreamResponse{
+  string stream_value=1;
+}
+
+message StreamRequest{
+  string stream_data=1;
+}
+
+
+
+message SimpleResponse{
+  int32 code=1;
+  string value=2;
+}
+
+
+
+message StreamReq{
+  string question=1;
+}
+
+message StreamResp{
+  string answer=1;
+}
+
+
+
+
+
+
+
+
+

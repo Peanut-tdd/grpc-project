@@ -1,0 +1,45 @@
+syntax ="proto3";
+
+
+package user;
+
+
+option go_package ="github.com/pbuser/genproto/user";
+
+
+import "common/common.proto";
+
+
+
+
+
+service UserService{
+  rpc CreateUser(common.CreateUserRequest)returns(common.CreateUserResponse){}
+  rpc GetUserInfo(common.GetUserInfoRequest)returns(common.GetUserResponse){}
+}
+
+
+
+
+
+service StreamService{
+  rpc ListValue(common.SimpleRequest)returns(stream common.StreamResponse){};
+}
+
+
+service StreamClient{
+  rpc Upload(stream common.StreamRequest)returns(common.SimpleResponse){};
+}
+
+
+
+service Stream{
+  rpc Conversations(stream common.StreamReq)returns(stream common.StreamResp){};
+}
+
+
+
+
+
+
+
