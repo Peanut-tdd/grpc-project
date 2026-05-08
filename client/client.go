@@ -4,13 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"strconv"
+
+	"github.com/pbuser/client/auth"
 	common "github.com/pbuser/genproto/common"
 	pb "github.com/pbuser/genproto/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
-	"io"
-	"log"
-	"strconv"
 )
 
 const Addr = ":8080"
@@ -23,13 +25,37 @@ var (
 )
 
 func main() {
+	conn, err := initClient()
+	if err != nil {
+		log.Fatalf("failed to initialize client: %v", err)
+	}
+	defer conn.Close()
+
+	//UserService()
+	//ListValue()
+
+	//Upload()
+	conversations()
+}
+
+func initClient() (*grpc.ClientConn, error) {
+	tokens, err := auth.CreateAuth()
+	if err != nil {
+		return nil, fmt.Errorf("CreateAuth err: %w", err)
+	}
+
+	b, _ := json.Marshal(tokens)
+	fmt.Println(string(b))
+
+	authToken := auth.Token{
+		Value: "bearer " + tokens.AccessToken,
+	}
 
 	//连接服务器
-	connect, err := grpc.Dial(Addr, grpc.WithInsecure())
+	connect, err := grpc.Dial(Addr, grpc.WithInsecure(), grpc.WithPerRPCCredentials(&authToken))
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("grpc.Dial err: %w", err)
 	}
-	defer connect.Close()
 
 	// 建立gRPC连接
 	uGrpcClient = pb.NewUserServiceClient(connect)
@@ -37,12 +63,7 @@ func main() {
 	cGrpcClient = pb.NewStreamClientClient(connect)
 	bothGrpcClient = pb.NewStreamClient(connect)
 
-	//UserService()
-	//ListValue()
-
-	//Upload()
-	conversations()
-
+	return connect, nil
 }
 
 // 一元rpc
