@@ -69,6 +69,28 @@ message StreamResp{
 }
 
 
+message CreateGoodReq{
+  map<string,string> good=1;
+  repeated Tags Tags =2;
+}
+
+
+
+
+enum Tags{
+  Tag_Elec=0;
+  Tag_New=1;
+  Tag_Hot=2;
+  Tag_Sale=3;
+}
+
+
+message CreateGoodResp{
+  map<string,string> result=1;
+  repeated Tags Tags=2;
+  string Code=3;
+}
+
 
 
 

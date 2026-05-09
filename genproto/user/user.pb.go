@@ -35,7 +35,10 @@ const file_user_user_proto_rawDesc = "" +
 	"\fStreamClient\x12;\n" +
 	"\x06Upload\x12\x15.common.StreamRequest\x1a\x16.common.SimpleResponse\"\x00(\x012F\n" +
 	"\x06Stream\x12<\n" +
-	"\rConversations\x12\x11.common.StreamReq\x1a\x12.common.StreamResp\"\x00(\x010\x01B!Z\x1fgithub.com/pbuser/genproto/userb\x06proto3"
+	"\rConversations\x12\x11.common.StreamReq\x1a\x12.common.StreamResp\"\x00(\x010\x012E\n" +
+	"\x04Good\x12=\n" +
+	"\n" +
+	"CreateGood\x12\x15.common.CreateGoodReq\x1a\x16.common.CreateGoodResp\"\x00B!Z\x1fgithub.com/pbuser/genproto/userb\x06proto3"
 
 var file_user_user_proto_goTypes = []any{
 	(*common.CreateUserRequest)(nil),  // 0: common.CreateUserRequest
@@ -43,28 +46,32 @@ var file_user_user_proto_goTypes = []any{
 	(*common.SimpleRequest)(nil),      // 2: common.SimpleRequest
 	(*common.StreamRequest)(nil),      // 3: common.StreamRequest
 	(*common.StreamReq)(nil),          // 4: common.StreamReq
-	(*common.CreateUserResponse)(nil), // 5: common.CreateUserResponse
-	(*common.GetUserResponse)(nil),    // 6: common.GetUserResponse
-	(*common.StreamResponse)(nil),     // 7: common.StreamResponse
-	(*common.SimpleResponse)(nil),     // 8: common.SimpleResponse
-	(*common.StreamResp)(nil),         // 9: common.StreamResp
+	(*common.CreateGoodReq)(nil),      // 5: common.CreateGoodReq
+	(*common.CreateUserResponse)(nil), // 6: common.CreateUserResponse
+	(*common.GetUserResponse)(nil),    // 7: common.GetUserResponse
+	(*common.StreamResponse)(nil),     // 8: common.StreamResponse
+	(*common.SimpleResponse)(nil),     // 9: common.SimpleResponse
+	(*common.StreamResp)(nil),         // 10: common.StreamResp
+	(*common.CreateGoodResp)(nil),     // 11: common.CreateGoodResp
 }
 var file_user_user_proto_depIdxs = []int32{
-	0, // 0: user.UserService.CreateUser:input_type -> common.CreateUserRequest
-	1, // 1: user.UserService.GetUserInfo:input_type -> common.GetUserInfoRequest
-	2, // 2: user.StreamService.ListValue:input_type -> common.SimpleRequest
-	3, // 3: user.StreamClient.Upload:input_type -> common.StreamRequest
-	4, // 4: user.Stream.Conversations:input_type -> common.StreamReq
-	5, // 5: user.UserService.CreateUser:output_type -> common.CreateUserResponse
-	6, // 6: user.UserService.GetUserInfo:output_type -> common.GetUserResponse
-	7, // 7: user.StreamService.ListValue:output_type -> common.StreamResponse
-	8, // 8: user.StreamClient.Upload:output_type -> common.SimpleResponse
-	9, // 9: user.Stream.Conversations:output_type -> common.StreamResp
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: user.UserService.CreateUser:input_type -> common.CreateUserRequest
+	1,  // 1: user.UserService.GetUserInfo:input_type -> common.GetUserInfoRequest
+	2,  // 2: user.StreamService.ListValue:input_type -> common.SimpleRequest
+	3,  // 3: user.StreamClient.Upload:input_type -> common.StreamRequest
+	4,  // 4: user.Stream.Conversations:input_type -> common.StreamReq
+	5,  // 5: user.Good.CreateGood:input_type -> common.CreateGoodReq
+	6,  // 6: user.UserService.CreateUser:output_type -> common.CreateUserResponse
+	7,  // 7: user.UserService.GetUserInfo:output_type -> common.GetUserResponse
+	8,  // 8: user.StreamService.ListValue:output_type -> common.StreamResponse
+	9,  // 9: user.StreamClient.Upload:output_type -> common.SimpleResponse
+	10, // 10: user.Stream.Conversations:output_type -> common.StreamResp
+	11, // 11: user.Good.CreateGood:output_type -> common.CreateGoodResp
+	6,  // [6:12] is the sub-list for method output_type
+	0,  // [0:6] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_user_user_proto_init() }
@@ -80,7 +87,7 @@ func file_user_user_proto_init() {
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
-			NumServices:   4,
+			NumServices:   5,
 		},
 		GoTypes:           file_user_user_proto_goTypes,
 		DependencyIndexes: file_user_user_proto_depIdxs,

@@ -22,6 +22,7 @@ var (
 	sGrpcClient    pb.StreamServiceClient
 	cGrpcClient    pb.StreamClientClient
 	bothGrpcClient pb.StreamClient
+	gGrpcClient    pb.GoodClient
 )
 
 func main() {
@@ -36,6 +37,7 @@ func main() {
 
 	//Upload()
 	conversations()
+	//CreateGood()
 }
 
 func initClient() (*grpc.ClientConn, error) {
@@ -62,6 +64,8 @@ func initClient() (*grpc.ClientConn, error) {
 	sGrpcClient = pb.NewStreamServiceClient(connect)
 	cGrpcClient = pb.NewStreamClientClient(connect)
 	bothGrpcClient = pb.NewStreamClient(connect)
+
+	gGrpcClient = pb.NewGoodClient(connect)
 
 	return connect, nil
 }
@@ -179,4 +183,23 @@ func conversations() {
 		grpclog.Fatalf("fail to conversations: %v", err)
 	}
 
+}
+
+func CreateGood() {
+	req := &common.CreateGoodReq{
+		Good: map[string]string{
+			"name":  "Apple 18 ProMax",
+			"sku":   "00001",
+			"price": "18000",
+		},
+		Tags: []common.Tags{common.Tags_Tag_Elec, common.Tags_Tag_Hot},
+	}
+
+	resp, err := gGrpcClient.CreateGood(context.Background(), req)
+	if err != nil {
+		grpclog.Fatalf("fail to create good: %v", err)
+	}
+
+	js, _ := json.Marshal(resp)
+	fmt.Printf("create good resp:%v\n", string(js))
 }

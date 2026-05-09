@@ -454,3 +454,105 @@ var Stream_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "user/user.proto",
 }
+
+const (
+	Good_CreateGood_FullMethodName = "/user.Good/CreateGood"
+)
+
+// GoodClient is the client API for Good service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type GoodClient interface {
+	CreateGood(ctx context.Context, in *common.CreateGoodReq, opts ...grpc.CallOption) (*common.CreateGoodResp, error)
+}
+
+type goodClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewGoodClient(cc grpc.ClientConnInterface) GoodClient {
+	return &goodClient{cc}
+}
+
+func (c *goodClient) CreateGood(ctx context.Context, in *common.CreateGoodReq, opts ...grpc.CallOption) (*common.CreateGoodResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(common.CreateGoodResp)
+	err := c.cc.Invoke(ctx, Good_CreateGood_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// GoodServer is the server API for Good service.
+// All implementations must embed UnimplementedGoodServer
+// for forward compatibility.
+type GoodServer interface {
+	CreateGood(context.Context, *common.CreateGoodReq) (*common.CreateGoodResp, error)
+	mustEmbedUnimplementedGoodServer()
+}
+
+// UnimplementedGoodServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedGoodServer struct{}
+
+func (UnimplementedGoodServer) CreateGood(context.Context, *common.CreateGoodReq) (*common.CreateGoodResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateGood not implemented")
+}
+func (UnimplementedGoodServer) mustEmbedUnimplementedGoodServer() {}
+func (UnimplementedGoodServer) testEmbeddedByValue()              {}
+
+// UnsafeGoodServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to GoodServer will
+// result in compilation errors.
+type UnsafeGoodServer interface {
+	mustEmbedUnimplementedGoodServer()
+}
+
+func RegisterGoodServer(s grpc.ServiceRegistrar, srv GoodServer) {
+	// If the following call panics, it indicates UnimplementedGoodServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Good_ServiceDesc, srv)
+}
+
+func _Good_CreateGood_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(common.CreateGoodReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoodServer).CreateGood(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Good_CreateGood_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoodServer).CreateGood(ctx, req.(*common.CreateGoodReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Good_ServiceDesc is the grpc.ServiceDesc for Good service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Good_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "user.Good",
+	HandlerType: (*GoodServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateGood",
+			Handler:    _Good_CreateGood_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "user/user.proto",
+}

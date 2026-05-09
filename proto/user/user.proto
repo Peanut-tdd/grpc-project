@@ -39,6 +39,12 @@ service Stream{
 
 
 
+service Good{
+  rpc CreateGood(common.CreateGoodReq)returns(common.CreateGoodResp){};
+}
+
+
+
 
 
 

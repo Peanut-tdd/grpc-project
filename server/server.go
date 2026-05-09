@@ -40,6 +40,8 @@ func main() {
 	pb.RegisterStreamClientServer(grpcServer, service.NewUploadService())
 	pb.RegisterStreamServer(grpcServer, service.NewBothStreamServer())
 
+	pb.RegisterGoodServer(grpcServer, service.NewGoodService())
+
 	err = grpcServer.Serve(lister)
 	if err != nil {
 		log.Fatalf("grpcServer.Serve err: %v", err)

@@ -21,6 +21,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Tags int32
+
+const (
+	Tags_Tag_Elec Tags = 0
+	Tags_Tag_New  Tags = 1
+	Tags_Tag_Hot  Tags = 2
+	Tags_Tag_Sale Tags = 3
+)
+
+// Enum value maps for Tags.
+var (
+	Tags_name = map[int32]string{
+		0: "Tag_Elec",
+		1: "Tag_New",
+		2: "Tag_Hot",
+		3: "Tag_Sale",
+	}
+	Tags_value = map[string]int32{
+		"Tag_Elec": 0,
+		"Tag_New":  1,
+		"Tag_Hot":  2,
+		"Tag_Sale": 3,
+	}
+)
+
+func (x Tags) Enum() *Tags {
+	p := new(Tags)
+	*p = x
+	return p
+}
+
+func (x Tags) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Tags) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_common_proto_enumTypes[0].Descriptor()
+}
+
+func (Tags) Type() protoreflect.EnumType {
+	return &file_common_common_proto_enumTypes[0]
+}
+
+func (x Tags) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Tags.Descriptor instead.
+func (Tags) EnumDescriptor() ([]byte, []int) {
+	return file_common_common_proto_rawDescGZIP(), []int{0}
+}
+
 type CreateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -541,6 +593,118 @@ func (x *StreamResp) GetAnswer() string {
 	return ""
 }
 
+type CreateGoodReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Good          map[string]string      `protobuf:"bytes,1,rep,name=good,proto3" json:"good,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Tags          []Tags                 `protobuf:"varint,2,rep,packed,name=Tags,proto3,enum=common.Tags" json:"Tags,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateGoodReq) Reset() {
+	*x = CreateGoodReq{}
+	mi := &file_common_common_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateGoodReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGoodReq) ProtoMessage() {}
+
+func (x *CreateGoodReq) ProtoReflect() protoreflect.Message {
+	mi := &file_common_common_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateGoodReq.ProtoReflect.Descriptor instead.
+func (*CreateGoodReq) Descriptor() ([]byte, []int) {
+	return file_common_common_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CreateGoodReq) GetGood() map[string]string {
+	if x != nil {
+		return x.Good
+	}
+	return nil
+}
+
+func (x *CreateGoodReq) GetTags() []Tags {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+type CreateGoodResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Result        map[string]string      `protobuf:"bytes,1,rep,name=result,proto3" json:"result,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Tags          []Tags                 `protobuf:"varint,2,rep,packed,name=Tags,proto3,enum=common.Tags" json:"Tags,omitempty"`
+	Code          string                 `protobuf:"bytes,3,opt,name=Code,proto3" json:"Code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateGoodResp) Reset() {
+	*x = CreateGoodResp{}
+	mi := &file_common_common_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateGoodResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGoodResp) ProtoMessage() {}
+
+func (x *CreateGoodResp) ProtoReflect() protoreflect.Message {
+	mi := &file_common_common_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateGoodResp.ProtoReflect.Descriptor instead.
+func (*CreateGoodResp) Descriptor() ([]byte, []int) {
+	return file_common_common_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CreateGoodResp) GetResult() map[string]string {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+func (x *CreateGoodResp) GetTags() []Tags {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *CreateGoodResp) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
 var File_common_common_proto protoreflect.FileDescriptor
 
 const file_common_common_proto_rawDesc = "" +
@@ -577,7 +741,25 @@ const file_common_common_proto_rawDesc = "" +
 	"\bquestion\x18\x01 \x01(\tR\bquestion\"$\n" +
 	"\n" +
 	"StreamResp\x12\x16\n" +
-	"\x06answer\x18\x01 \x01(\tR\x06answerB#Z!github.com/pbuser/genproto/commonb\x06proto3"
+	"\x06answer\x18\x01 \x01(\tR\x06answer\"\x9f\x01\n" +
+	"\rCreateGoodReq\x123\n" +
+	"\x04good\x18\x01 \x03(\v2\x1f.common.CreateGoodReq.GoodEntryR\x04good\x12 \n" +
+	"\x04Tags\x18\x02 \x03(\x0e2\f.common.TagsR\x04Tags\x1a7\n" +
+	"\tGoodEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xbd\x01\n" +
+	"\x0eCreateGoodResp\x12:\n" +
+	"\x06result\x18\x01 \x03(\v2\".common.CreateGoodResp.ResultEntryR\x06result\x12 \n" +
+	"\x04Tags\x18\x02 \x03(\x0e2\f.common.TagsR\x04Tags\x12\x12\n" +
+	"\x04Code\x18\x03 \x01(\tR\x04Code\x1a9\n" +
+	"\vResultEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01*<\n" +
+	"\x04Tags\x12\f\n" +
+	"\bTag_Elec\x10\x00\x12\v\n" +
+	"\aTag_New\x10\x01\x12\v\n" +
+	"\aTag_Hot\x10\x02\x12\f\n" +
+	"\bTag_Sale\x10\x03B#Z!github.com/pbuser/genproto/commonb\x06proto3"
 
 var (
 	file_common_common_proto_rawDescOnce sync.Once
@@ -591,25 +773,35 @@ func file_common_common_proto_rawDescGZIP() []byte {
 	return file_common_common_proto_rawDescData
 }
 
-var file_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_common_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_common_common_proto_goTypes = []any{
-	(*CreateUserRequest)(nil),  // 0: common.CreateUserRequest
-	(*GetUserInfoRequest)(nil), // 1: common.GetUserInfoRequest
-	(*CreateUserResponse)(nil), // 2: common.CreateUserResponse
-	(*GetUserResponse)(nil),    // 3: common.GetUserResponse
-	(*SimpleRequest)(nil),      // 4: common.SimpleRequest
-	(*StreamResponse)(nil),     // 5: common.StreamResponse
-	(*StreamRequest)(nil),      // 6: common.StreamRequest
-	(*SimpleResponse)(nil),     // 7: common.SimpleResponse
-	(*StreamReq)(nil),          // 8: common.StreamReq
-	(*StreamResp)(nil),         // 9: common.StreamResp
+	(Tags)(0),                  // 0: common.Tags
+	(*CreateUserRequest)(nil),  // 1: common.CreateUserRequest
+	(*GetUserInfoRequest)(nil), // 2: common.GetUserInfoRequest
+	(*CreateUserResponse)(nil), // 3: common.CreateUserResponse
+	(*GetUserResponse)(nil),    // 4: common.GetUserResponse
+	(*SimpleRequest)(nil),      // 5: common.SimpleRequest
+	(*StreamResponse)(nil),     // 6: common.StreamResponse
+	(*StreamRequest)(nil),      // 7: common.StreamRequest
+	(*SimpleResponse)(nil),     // 8: common.SimpleResponse
+	(*StreamReq)(nil),          // 9: common.StreamReq
+	(*StreamResp)(nil),         // 10: common.StreamResp
+	(*CreateGoodReq)(nil),      // 11: common.CreateGoodReq
+	(*CreateGoodResp)(nil),     // 12: common.CreateGoodResp
+	nil,                        // 13: common.CreateGoodReq.GoodEntry
+	nil,                        // 14: common.CreateGoodResp.ResultEntry
 }
 var file_common_common_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	13, // 0: common.CreateGoodReq.good:type_name -> common.CreateGoodReq.GoodEntry
+	0,  // 1: common.CreateGoodReq.Tags:type_name -> common.Tags
+	14, // 2: common.CreateGoodResp.result:type_name -> common.CreateGoodResp.ResultEntry
+	0,  // 3: common.CreateGoodResp.Tags:type_name -> common.Tags
+	4,  // [4:4] is the sub-list for method output_type
+	4,  // [4:4] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_common_common_proto_init() }
@@ -622,13 +814,14 @@ func file_common_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_common_proto_rawDesc), len(file_common_common_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   10,
+			NumEnums:      1,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_common_common_proto_goTypes,
 		DependencyIndexes: file_common_common_proto_depIdxs,
+		EnumInfos:         file_common_common_proto_enumTypes,
 		MessageInfos:      file_common_common_proto_msgTypes,
 	}.Build()
 	File_common_common_proto = out.File
