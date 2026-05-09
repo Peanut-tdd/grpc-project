@@ -16,6 +16,10 @@ import "api/annotations.proto";
 
 service UserService{
   rpc CreateUser(common.CreateUserRequest)returns(common.CreateUserResponse){
+    option(google.api.http)={
+      post:"/v1/user/create"
+      body:"*"
+    };
   }
 
   rpc GetUserInfo(common.GetUserInfoRequest)returns(common.GetUserResponse){
