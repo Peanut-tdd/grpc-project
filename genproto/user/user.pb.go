@@ -7,6 +7,7 @@
 package user
 
 import (
+	_ "github.com/pbuser/genproto/api"
 	common "github.com/pbuser/genproto/common"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -25,11 +26,11 @@ var File_user_user_proto protoreflect.FileDescriptor
 
 const file_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x0fuser/user.proto\x12\x04user\x1a\x13common/common.proto2\x9a\x01\n" +
+	"\x0fuser/user.proto\x12\x04user\x1a\x13common/common.proto\x1a\x15api/annotations.proto2\xb2\x01\n" +
 	"\vUserService\x12E\n" +
 	"\n" +
-	"CreateUser\x12\x19.common.CreateUserRequest\x1a\x1a.common.CreateUserResponse\"\x00\x12D\n" +
-	"\vGetUserInfo\x12\x1a.common.GetUserInfoRequest\x1a\x17.common.GetUserResponse\"\x002O\n" +
+	"CreateUser\x12\x19.common.CreateUserRequest\x1a\x1a.common.CreateUserResponse\"\x00\x12\\\n" +
+	"\vGetUserInfo\x12\x1a.common.GetUserInfoRequest\x1a\x17.common.GetUserResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/v1/user/info2O\n" +
 	"\rStreamService\x12>\n" +
 	"\tListValue\x12\x15.common.SimpleRequest\x1a\x16.common.StreamResponse\"\x000\x012K\n" +
 	"\fStreamClient\x12;\n" +

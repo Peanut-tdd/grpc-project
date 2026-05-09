@@ -4,18 +4,26 @@ syntax ="proto3";
 package user;
 
 
-option go_package ="github.com/pbuser/genproto/user";
+option go_package ="github.com/pbuser/genproto/user";   //需要和
 
 
 import "common/common.proto";
+import "api/annotations.proto";
 
 
 
 
 
 service UserService{
-  rpc CreateUser(common.CreateUserRequest)returns(common.CreateUserResponse){}
-  rpc GetUserInfo(common.GetUserInfoRequest)returns(common.GetUserResponse){}
+  rpc CreateUser(common.CreateUserRequest)returns(common.CreateUserResponse){
+  }
+
+  rpc GetUserInfo(common.GetUserInfoRequest)returns(common.GetUserResponse){
+    option(google.api.http)={
+      post: "/v1/user/info"
+      body: "*"
+    };
+  }
 }
 
 

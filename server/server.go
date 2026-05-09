@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/pbuser/server/service/gateway"
 	"log"
 	"net"
 	"time"
@@ -18,20 +19,21 @@ import (
 const (
 	Addr           = ":8080"
 	NetWork        = "tcp"
+	HttpAddr       = ":5002"
 	DefaultTimeout = 5 * time.Second
 )
 
 func main() {
-	lister, err := net.Listen(NetWork, Addr)
+	listener, err := net.Listen(NetWork, Addr)
 	if err != nil {
 		log.Fatalf("net.Listen err: %v", err)
 		return
 	}
 
-	defer lister.Close()
+	defer listener.Close()
 	defer middleware.CloseLogger()
 
-	fmt.Println("server lister is ", lister.Addr())
+	fmt.Println("server lister is ", listener.Addr())
 
 	//拦截器，可注册日志，授权认证
 	grpcServer := grpc.NewServer(
@@ -54,8 +56,19 @@ func main() {
 
 	pb.RegisterGoodServer(grpcServer, service.NewGoodService())
 
-	err = grpcServer.Serve(lister)
-	if err != nil {
-		log.Fatalf("grpcServer.Serve err: %v", err)
+	// 在 goroutine 中启动 gRPC 服务，防止阻塞
+	go func() {
+		fmt.Printf("gRPC server listening on %s\n", Addr)
+		if err := grpcServer.Serve(listener); err != nil {
+			log.Fatalf("grpcServer.Serve err: %v", err)
+		}
+	}()
+
+	// 使用 gateway 把 grpcServer 转成 httpServer
+	// 这里的 Addr 是 gRPC 的地址，"127.0.0.1:5002" 是 Gateway 的监听地址
+	httpServer := gateway.ProvideHTTP("127.0.0.1"+Addr, "127.0.0.1"+HttpAddr, grpcServer)
+	fmt.Printf("HTTP Gateway listening on %s\n", fmt.Sprintf("%s%s", "127.0.0.1", HttpAddr))
+	if err = httpServer.ListenAndServe(); err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
 }
