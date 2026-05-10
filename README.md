@@ -9,16 +9,16 @@
 .
 ├── README.md
 ├── client
-│   ├── auth
+│   ├── auth                    //jwt认证
 │   │   └── auth.go
 │   ├── client.go
-│   ├── etcd
+│   ├── etcd                        //etcd服务发现与watch
 │   │   └── discovery.go
-│   ├── trace
+│   ├── trace                       //链路追踪
 │   │   └── trace.go
-│   └── zap
-│       └── zap.go
-├── genproto
+│   └── zap                        //zap日志
+│       └── zap.go                  
+├── genproto                        //pb.go文件目录
 │   ├── common
 │   │   └── common.pb.go
 │   └── user
@@ -33,7 +33,7 @@
 │   ├── img_2.png
 │   ├── img_4.png
 │   └── img_5.png
-├── proto
+├── proto                           //pb定义文件目录
 │   ├── common
 │   │   └── common.proto
 │   ├── google
@@ -41,26 +41,26 @@
 │   │       ├── annotations.proto
 │   │       └── http.proto
 │   └── user
-│       └── user.proto
+│       └── user.proto          
 └── server
     ├── jwt
-    │   └── jwt.go
+    │   └── jwt.go                 //jwt
     ├── middleware
-    │   ├── auth.go
-    │   ├── cancel.go
-    │   └── zap.go
-    ├── server.go
-    ├── service
-    │   ├── bothstream.go
-    │   ├── etcd
+    │   ├── auth.go             //jwt认证
+    │   ├── cancel.go           //超时控制
+    │   └── zap.go              //zap日志
+    ├── server.go                          
+    ├── service                      
+    │   ├── bothstream.go       //双向流式rpc
+    │   ├── etcd                //etcd服务注册
     │   │   └── register.go
-    │   ├── gateway
+    │   ├── gateway                 //rpc服务转http，实现支持curl请求
     │   │   └── gateway.go
     │   ├── good.go
-    │   ├── stream.go
-    │   ├── upload.go
-    │   └── user.go
-    └── trace
+    │   ├── stream.go       //服务端流式rpc
+    │   ├── upload.go       //客户端流式rpc
+    │   └── user.go         //一元rpc
+    └── trace          //创建 tracer Provider
         └── trace.go
 
 
