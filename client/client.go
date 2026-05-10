@@ -9,13 +9,18 @@ import (
 	"strconv"
 
 	"github.com/pbuser/client/auth"
+	"github.com/pbuser/client/etcd"
+	clienttrace "github.com/pbuser/client/trace"
+	"github.com/pbuser/client/zap"
 	common "github.com/pbuser/genproto/common"
 	pb "github.com/pbuser/genproto/user"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/peer"
+	"google.golang.org/grpc/resolver"
 )
-
-const Addr = ":8080"
 
 var (
 	uGrpcClient    pb.UserServiceClient
@@ -25,8 +30,74 @@ var (
 	gGrpcClient    pb.GoodClient
 )
 
+var EtcdEndpoints = []string{"localhost:2379"}
+
+func unaryInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	var p peer.Peer
+	if err := invoker(ctx, method, req, reply, cc, append(opts, grpc.Peer(&p))...); err != nil {
+		return err
+	}
+	if p.Addr != nil {
+		fmt.Printf("Unary call: %s -> Server Address: %s\n", method, p.Addr.String())
+	}
+	return nil
+}
+
+type wrappedStream struct {
+	grpc.ClientStream
+	method  string
+	printed bool
+}
+
+func (w *wrappedStream) RecvMsg(m interface{}) error {
+	err := w.ClientStream.RecvMsg(m)
+	if !w.printed {
+		w.printServerAddr()
+		w.printed = true
+	}
+	return err
+}
+
+func (w *wrappedStream) SendMsg(m interface{}) error {
+	err := w.ClientStream.SendMsg(m)
+	if !w.printed {
+		w.printServerAddr()
+		w.printed = true
+	}
+	return err
+}
+
+func (w *wrappedStream) printServerAddr() {
+	if p, ok := peer.FromContext(w.ClientStream.Context()); ok && p.Addr != nil {
+		fmt.Printf("Stream call: %s -> Server Address: %s\n", w.method, p.Addr.String())
+	}
+}
+
+func streamInterceptor(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	stream, err := streamer(ctx, desc, cc, method, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &wrappedStream{
+		ClientStream: stream,
+		method:       method,
+		printed:      false,
+	}, nil
+}
+
 func main() {
-	conn, err := initClient()
+
+	// 初始化 zap logger
+	//zapLogger := zap.ZapInterceptor()
+	zap.ZapInterceptor()
+	defer zap.CloseLogger()
+	ctx := context.Background()
+	cleanup := clienttrace.InitTracer(ctx)
+	defer cleanup()
+
+	ctx = clienttrace.FuncCall(ctx, "main")
+
+	conn, err := initClient(ctx)
 	if err != nil {
 		log.Fatalf("failed to initialize client: %v", err)
 	}
@@ -36,27 +107,56 @@ func main() {
 	//ListValue()
 
 	//Upload()
-	conversations()
+	conversations(ctx)
 	//CreateGood()
 }
 
-func initClient() (*grpc.ClientConn, error) {
+func initClient(ctx context.Context) (*grpc.ClientConn, error) {
+
 	tokens, err := auth.CreateAuth()
 	if err != nil {
 		return nil, fmt.Errorf("CreateAuth err: %w", err)
 	}
 
 	b, _ := json.Marshal(tokens)
-	fmt.Println(string(b))
+
+	zap.CtxInfof(ctx, "tokens: %v", string(b))
 
 	authToken := auth.Token{
-		Value: "bearer " + tokens.AccessToken,
+		Value:   "bearer " + tokens.AccessToken,
+		TraceId: "123456",
 	}
 
+	//etcd服务发现
+	r := etcd.NewServerDiscovery(EtcdEndpoints)
+	resolver.Register(r)
+
+	//fmt.Println(r.Scheme())
+
+	// 设置默认服务配置（使用 round_robin 负载均衡）
+	defaultServiceConfig := `{"loadBalancingPolicy":"round_robin"}`
+
 	//连接服务器
-	connect, err := grpc.Dial(Addr, grpc.WithInsecure(), grpc.WithPerRPCCredentials(&authToken))
+	connect, err := grpc.NewClient(r.Scheme()+":///grpc-demo",
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithPerRPCCredentials(&authToken),
+		grpc.WithDefaultServiceConfig(defaultServiceConfig),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()), //写入traceid到
+		grpc.WithUnaryInterceptor(unaryInterceptor),
+		grpc.WithStreamInterceptor(streamInterceptor),
+
+		//拦截器注册日志，但是会记录很多系统日志
+		//grpc.WithUnaryInterceptor(grpc_middleware.ChainUnaryClient(
+		//	unaryInterceptor,
+		//	grpc_zap.UnaryClientInterceptor(zapLogger),
+		//)),
+		//grpc.WithStreamInterceptor(grpc_middleware.ChainStreamClient(
+		//	streamInterceptor,
+		//	grpc_zap.StreamClientInterceptor(zapLogger),
+		//)),
+	)
 	if err != nil {
-		return nil, fmt.Errorf("grpc.Dial err: %w", err)
+		return nil, fmt.Errorf("grpc.NewClient err: %w", err)
 	}
 
 	// 建立gRPC连接
@@ -150,9 +250,11 @@ func Upload() {
 }
 
 // 双向流式
-func conversations() {
+func conversations(ctx context.Context) {
 
-	stream, err := bothGrpcClient.Conversations(context.Background())
+	ctx = clienttrace.FuncCall(ctx, "conversations")
+
+	stream, err := bothGrpcClient.Conversations(ctx)
 
 	if err != nil {
 		grpclog.Fatalf("fail to conversations: %v", err)
@@ -175,6 +277,8 @@ func conversations() {
 		}
 
 		fmt.Printf("conversations resp:%v\n", res.Answer)
+
+		zap.CtxInfof(ctx, "conversations resp:%v", res.Answer)
 
 	}
 

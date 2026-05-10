@@ -1,4 +1,4 @@
-package middleware
+package zap
 
 import (
 	"context"
@@ -32,7 +32,6 @@ func InitLogger() *zap.Logger {
 
 	ZapLogger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 
-	//记录全局日志
 	//grpc_zap.ReplaceGrpcLoggerV2(ZapLogger)
 
 	return ZapLogger

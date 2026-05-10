@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/grpclog"
 )
 
-func ProvideHTTP(grpcAddr string, httpAddr string, grpcServer *grpc.Server) *http.Server {
+func NewGateway(grpcAddr string, httpAddr string, grpcServer *grpc.Server) *http.Server {
 	ctx := context.Background()
 
 	// grpc服务地址

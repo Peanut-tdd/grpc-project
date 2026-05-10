@@ -7,8 +7,8 @@
 package user
 
 import (
-	_ "github.com/pbuser/genproto/api"
 	common "github.com/pbuser/genproto/common"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -26,7 +26,7 @@ var File_user_user_proto protoreflect.FileDescriptor
 
 const file_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x0fuser/user.proto\x12\x04user\x1a\x13common/common.proto\x1a\x15api/annotations.proto2\xcc\x01\n" +
+	"\x0fuser/user.proto\x12\x04user\x1a\x13common/common.proto\x1a\x1cgoogle/api/annotations.proto2\xcc\x01\n" +
 	"\vUserService\x12_\n" +
 	"\n" +
 	"CreateUser\x12\x19.common.CreateUserRequest\x1a\x1a.common.CreateUserResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/user/create\x12\\\n" +

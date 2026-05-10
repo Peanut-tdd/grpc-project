@@ -90,14 +90,16 @@ func (jm *JwtManager) RefreshTokens(userId uint) (string, error) {
 }
 
 type Token struct {
-	Value string
+	Value   string
+	TraceId string
 }
 
 const headerAuthorize string = "authorization"
+const traceId string = "traceId"
 
 // GetRequestMetadata 获取当前请求认证所需的元数据
 func (t *Token) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
-	return map[string]string{headerAuthorize: t.Value}, nil
+	return map[string]string{headerAuthorize: t.Value, traceId: t.TraceId}, nil
 }
 
 // RequireTransportSecurity 是否需要基于 TLS 认证进行安全传输

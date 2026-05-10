@@ -19,6 +19,27 @@ func AuthInterceptor(ctx context.Context) (context.Context, error) {
 		return nil, err
 	}
 
+	//从metadata中获取客户端设置的字段
+	//md, ok := metadata.FromIncomingContext(ctx)
+	//if !ok {
+	//	return nil, err
+	//}
+	//
+	//b, _ := json.Marshal(md)
+	//fmt.Println(string(b))
+	//
+	//
+	//var mataToken string
+	//var traceId string
+	//if value, ok := md["authorization"]; ok {
+	//	mataToken = value[0]
+	//}
+	//if value, ok := md["traceid"]; ok {
+	//	traceId = value[0]
+	//}
+	//
+	//fmt.Printf("mataToken: %s,traceId:%s\n", mataToken, traceId)
+
 	//fmt.Printf("token is %v\n", token)
 
 	jwtManager := jwt.NewJwtManager()

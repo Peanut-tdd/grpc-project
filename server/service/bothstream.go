@@ -1,12 +1,13 @@
 package service
 
 import (
-	"github.com/pbuser/server/middleware"
 	"io"
 	"strconv"
 
 	"github.com/pbuser/genproto/common"
 	pb "github.com/pbuser/genproto/user"
+	"github.com/pbuser/server/middleware"
+	servertrace "github.com/pbuser/server/trace"
 )
 
 type BothStreamServer struct {
@@ -19,12 +20,14 @@ func NewBothStreamServer() *BothStreamServer {
 
 func (c *BothStreamServer) Conversations(srv pb.Stream_ConversationsServer) error {
 
-	user, err := middleware.GetUserInfo(srv.Context())
+	ctx := servertrace.FuncCall(srv.Context(), "Conversations")
+
+	user, err := middleware.GetUserInfo(ctx)
 	if err != nil {
 		return err
 	}
 
-	middleware.CtxInfof(srv.Context(), "user info:%v", user)
+	middleware.CtxInfof(ctx, "user info:%v", user)
 
 	n := 1
 	for {
@@ -44,6 +47,6 @@ func (c *BothStreamServer) Conversations(srv pb.Stream_ConversationsServer) erro
 		}
 		n++
 
-		//middleware.CtxInfof(srv.Context(), "conversations result: %s", req.Question)
+		middleware.CtxInfof(ctx, "conversations result: %s", req.Question)
 	}
 }

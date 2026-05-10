@@ -6,36 +6,63 @@
 
 #### 目录结构
 ```aiignore
-├.
+.
 ├── README.md
-├── client                                //client端
+├── client
 │   ├── auth
 │   │   └── auth.go
-│   └── client.go
-├── genproto                            //pb文件生成目录
+│   ├── client.go
+│   ├── etcd
+│   │   └── discovery.go
+│   ├── trace
+│   │   └── trace.go
+│   └── zap
+│       └── zap.go
+├── genproto
 │   ├── common
 │   │   └── common.pb.go
 │   └── user
 │       ├── user.pb.go
+│       ├── user.pb.gw.go
 │       └── user_grpc.pb.go
 ├── go.mod
 ├── go.sum
-├── proto                           //proto定义文件目录
+├── img
+│   ├── img.png
+│   ├── img_1.png
+│   ├── img_2.png
+│   ├── img_4.png
+│   └── img_5.png
+├── proto
 │   ├── common
-│   │   └── common.proto   
+│   │   └── common.proto
+│   ├── google
+│   │   └── api
+│   │       ├── annotations.proto
+│   │       └── http.proto
 │   └── user
 │       └── user.proto
 └── server
-    ├── jwt                     //jwt 认证
+    ├── jwt
     │   └── jwt.go
     ├── middleware
-    │   └── auth.go         //auth验证
+    │   ├── auth.go
+    │   ├── cancel.go
+    │   └── zap.go
     ├── server.go
-    └── service
-        ├── bothstream.go       //双向流式
-        ├── stream.go           //服务端流式
-        ├── upload.go           //客户端流式
-        └── user.go             //普通rpc
+    ├── service
+    │   ├── bothstream.go
+    │   ├── etcd
+    │   │   └── register.go
+    │   ├── gateway
+    │   │   └── gateway.go
+    │   ├── good.go
+    │   ├── stream.go
+    │   ├── upload.go
+    │   └── user.go
+    └── trace
+        └── trace.go
+
 
 ```
 
@@ -63,7 +90,7 @@ go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@lat
 
 
 2.添加路由配置
-![img.png](img.png)
+![img.png](img/img.png)
 
 3.生成下载annotations.pb.go和http.pb.go文件
 ```aiignore
@@ -94,7 +121,52 @@ if err = httpServer.ListenAndServe(); err != nil {
 
 
 7.postman 携带bearer token请求
-![img_1.png](img_1.png)
+![img_1.png](img/img_1.png)
+
+
+
+
+
+
+
+
+#### 使用otel和jaeger完成客户端到服务端的链路追踪和上报，同时将traceid写入客户端&服务端zap日志中
+
+在客户端&服务端先初始化tracer
+
+客户端
+```aiignore
+
+cleanup := clienttrace.InitTracer(ctx)
+defer cleanup()
+```
+
+服务端
+```aiignore
+cleanup := servertrace.InitTracer(ctx)
+defer cleanup()
+```
+
+
+
+在客户端拦截器添加如下代码，将traceid写入metadata中
+```aiignore
+
+grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+```
+在客户端拦截器添加如下代码，自动解析metadata中的traceid，并创建一个子 span 继承父 span 的 trace_id
+```aiignore
+grpc.StatsHandler(otelgrpc.NewServerHandler())
+```
+
+
+![img_2.png](img/img_2.png)
+
+客户端带traceid日志
+![img_4.png](img/img_4.png)
+
+服务端带traceid日志
+![img_5.png](img/img_5.png)
 
 
 

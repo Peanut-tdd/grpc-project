@@ -8,7 +8,7 @@ option go_package ="github.com/pbuser/genproto/user";   //需要和
 
 
 import "common/common.proto";
-import "api/annotations.proto";
+import "google/api/annotations.proto";
 
 
 
