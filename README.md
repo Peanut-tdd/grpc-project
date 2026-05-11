@@ -172,3 +172,48 @@ grpc.StatsHandler(otelgrpc.NewServerHandler())
 
 
 
+
+#### grpcurl调试
+server端添加代码
+```aiignore
+	reflection.Register(grpcServer)
+```
+
+携带auth token 的grpcurl,查看服务列表
+```aiignore
+ grpcurl -plaintext -H "authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInVzZXJfbmFtZSI6ImFkbWluIiwiZXhwIjoxNzc4NDkyMzA3LCJpYXQiOjE3Nzg0OTE4ODd9.f6H46qgVY6fd8ZRvtUHpEjELXVDlnStlcivhuvUo5sY" 127.0.0.1:8080 list 
+```
+
+![img_6.png](img/img_6.png)
+
+查看服务提供的方法
+```aiignore
+grpcurl -plaintext -H "authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInVzZXJfbmFtZSI6ImFkbWluIiwiZXhwIjoxNzc4NDk1NzYxLCJpYXQiOjE3Nzg0OTM5NjF9.TJdstNmf-FDsCYG8AtWVSIE8I0luUo98IR9p18HaINw" 127.0.0.1:8080 list  user.UserService
+```
+![img_7.png](img/img_7.png)
+
+
+查看服务方法详情
+```aiignore
+grpcurl -plaintext -H "authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInVzZXJfbmFtZSI6ImFkbWluIiwiZXhwIjoxNzc4NDk1NzYxLCJpYXQiOjE3Nzg0OTM5NjF9.TJdstNmf-FDsCYG8AtWVSIE8I0luUo98IR9p18HaINw" 127.0.0.1:8080 describe  user.UserService
+```
+![img_8.png](img/img_8.png)
+
+
+
+#### grpcui调试
+携带token的grpcui命令
+```aiignore
+grpcui -plaintext  -H "authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInVzZXJfbmFtZSI6ImFkbWluIiwiZXhwIjoxNzc4NDk1NzYxLCJpYXQiOjE3Nzg0OTM5NjF9.TJdstNmf-FDsCYG8AtWVSIE8I0luUo98IR9p18HaINw" 127.0.0.1:8080
+```
+执行后返回可调试的url链接，可直接跳转到对应页面调试
+如下图：
+![img_9.png](img/img_9.png)
+
+
+
+
+
+
+
+

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"time"
@@ -84,6 +85,8 @@ func main() {
 	}
 	defer ser.Close()
 
+	//基于反射的grcpurl
+	reflection.Register(grpcServer)
 	// 在 goroutine 中启动 gRPC 服务，防止阻塞
 	go func() {
 		fmt.Printf("gRPC server listening on %s\n", Addr)

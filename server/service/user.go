@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/pbuser/genproto/common"
 	pb "github.com/pbuser/genproto/user"
+	"github.com/pbuser/server/middleware"
 )
 
 type userService struct {
@@ -20,11 +21,14 @@ func (u userService) CreateUser(ctx context.Context, rq *common.CreateUserReques
 	str, _ := json.Marshal(rq)
 	fmt.Println(string(str))
 
-	return &common.CreateUserResponse{
+	res := &common.CreateUserResponse{
 		Id:    1,
 		Name:  rq.Name,
 		Phone: rq.Phone,
-	}, nil
+	}
+
+	middleware.CtxInfof(ctx, "user info:%v", res)
+	return res, nil
 }
 
 func (u userService) GetUserInfo(ctx context.Context, rq *common.GetUserInfoRequest) (*common.GetUserResponse, error) {

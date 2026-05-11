@@ -34,7 +34,7 @@ func NewJwtManager() *JwtManager {
 	synconce.Do(func() {
 		jwtManager = &JwtManager{
 			Secret:        "123456",
-			AccessExpire:  time.Duration(7) * time.Minute,
+			AccessExpire:  time.Duration(30) * time.Minute,
 			RefreshExpire: time.Duration(14) * time.Hour,
 		}
 	})
