@@ -226,6 +226,10 @@ grpcui -plaintext  -H "authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
 
 #### ghz压测
 
+安装ghz
+```aiignore
+brew install ghz
+```
 
 
 进入项目目录，执行压测命令
@@ -281,6 +285,70 @@ Latency distribution:
 Status code distribution:
   [OK]   100000 responses 
 ```
+
+
+
+
+
+#### pprof的性能分析
+
+添加pprof配置
+```aiignore
+func startPprof() {
+	mux := http.NewServeMux()
+	mux.Handle("/debug/", http.DefaultServeMux)
+
+	server := &http.Server{
+		Addr:    "0.0.0.0:6060",
+		Handler: mux,
+	}
+
+	log.Println("pprof server listening on :6060")
+	if err := server.ListenAndServe(); err != nil {
+		log.Printf("pprof server error: %v", err)
+	}
+}
+
+
+```
+main函数中调用
+```aiignore
+	go startPprof()
+```
+
+然后，我们在浏览器中访问http://localhost:6060/debug/pprof/，可以看到如下界面：
+![img_11.png](img/img_11.png)
+
+其中：
+- allocs：所有的历史内存分配情况。
+- block：阻塞情况。
+- cmdline：命令行调用信息。
+- goroutine：协程情况。
+- heap：当前活跃对象的堆内存分配采集情况。
+- mutex：互斥锁信息。
+- profile：cpu使用情况。
+- threadcreate：新的操作系统线程创建情况。
+- trace：当前程序的执行trace。
+
+
+安装图可视化工具集，配合pprof web使用
+```aiignore
+brew install graphviz
+```
+
+
+采集过去20s的cpu使用数据
+```aiignore
+go tool pprof -seconds 20 -http=localhost:6061 http://localhost:6060/debug/pprof/profile
+```
+
+
+采集过去20s的堆内存使用情况
+```aiignore
+ go tool pprof -seconds 20 -http=localhost:6061 http://localhost:6060/debug/pprof/heap
+```
+
+
 
 
 

@@ -3,13 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/pbuser/server/service/etcd"
+	"github.com/pbuser/server/service/gateway"
+
+	//"github.com/pbuser/server/service/gateway"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"net/http"
+	_ "net/http/pprof"
 	"time"
-
-	"github.com/pbuser/server/service/etcd"
-	"github.com/pbuser/server/service/gateway"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -32,6 +35,8 @@ const (
 var EndPoints = []string{"localhost:2379"}
 
 func main() {
+
+	go startPprof()
 
 	ctx := context.Background()
 	cleanup := servertrace.InitTracer(ctx)
@@ -101,5 +106,20 @@ func main() {
 	fmt.Printf("HTTP Gateway listening on %s\n", fmt.Sprintf("%s%s", "127.0.0.1", HttpAddr))
 	if err = httpServer.ListenAndServe(); err != nil {
 		log.Fatal("ListenAndServe: ", err)
+	}
+}
+
+func startPprof() {
+	mux := http.NewServeMux()
+	mux.Handle("/debug/", http.DefaultServeMux)
+
+	server := &http.Server{
+		Addr:    "0.0.0.0:6060",
+		Handler: mux,
+	}
+
+	log.Println("pprof server listening on :6060")
+	if err := server.ListenAndServe(); err != nil {
+		log.Printf("pprof server error: %v", err)
 	}
 }
