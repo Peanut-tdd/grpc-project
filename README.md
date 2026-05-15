@@ -1,7 +1,7 @@
 
 ## grpc demo
 ```aiignore
-包含了一元，服务端流式，客户端流式，双向流式rpc，集成jwt认证,otel+jaeger链路追踪，zap日志,etcd服务注册发现，负载均衡
+包含了一元，服务端流式，客户端流式，双向流式rpc，集成jwt认证,otel+jaeger链路追踪，zap日志,etcd服务注册发现，负载均衡,pprof性能分析
 ```
 
 #### 目录结构
