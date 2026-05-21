@@ -45,10 +45,10 @@ func NewServiceRegister(endpoints []string, serName, addr string, lease int64) (
 	return ser, nil
 }
 
-func (s *ServiceRegister) putKeyWithLease(lease int64) error {
+func (s *ServiceRegister) putKeyWithLease(leaseTTL int64) error {
 
 	//创建带过期时间租约
-	resp, err := s.cli.Grant(context.Background(), lease)
+	resp, err := s.cli.Grant(context.Background(), leaseTTL)
 
 	if err != nil {
 		return err

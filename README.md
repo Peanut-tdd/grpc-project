@@ -75,6 +75,29 @@ protoc -I./proto --go_out=./genproto --go_opt  paths=source_relative --go-grpc_o
 ```
 
 
+#### etcd注册和发现，负载均衡
+先docker-compose部署etcd服务
+
+
+
+
+
+服务端创建租约+服务绑定租约+keepalive续租
+部分代码片段：
+![img_12.png](img/img_12.png)
+
+客户端拉取和watcher服务变化并缓存到本地
+部分代码片段：
+![img_13.png](img/img_13.png)
+
+
+etcd未启动服务端报错：
+![img_14.png](img/img_14.png)
+
+
+
+成功注册etcd服务:
+![img_15.png](img/img_15.png)
 
 
 
@@ -154,7 +177,7 @@ defer cleanup()
 
 grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 ```
-在客户端拦截器添加如下代码，自动解析metadata中的traceid，并创建一个子 span 继承父 span 的 trace_id
+在服务端拦截器添加如下代码，自动解析metadata中的traceid，并创建一个子 span 继承父 span 的 trace_id
 ```aiignore
 grpc.StatsHandler(otelgrpc.NewServerHandler())
 ```

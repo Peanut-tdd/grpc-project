@@ -29,6 +29,9 @@ func (c *BothStreamServer) Conversations(srv pb.Stream_ConversationsServer) erro
 
 	middleware.CtxInfof(ctx, "user info:%v", user)
 
+	var sliceMapdata []map[string]interface{}
+	sliceMapdata = make([]map[string]interface{}, 0)
+
 	n := 1
 	for {
 		req, err := srv.Recv()
@@ -42,6 +45,11 @@ func (c *BothStreamServer) Conversations(srv pb.Stream_ConversationsServer) erro
 		err = srv.Send(&common.StreamResp{
 			Answer: "from stream server answer: the " + strconv.Itoa(n) + " question is " + req.Question,
 		})
+
+		sliceMapdata = append(sliceMapdata, map[string]interface{}{
+			"question": req.Question,
+		})
+
 		if err != nil {
 			return err
 		}

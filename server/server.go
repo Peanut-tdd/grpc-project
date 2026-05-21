@@ -84,7 +84,7 @@ func main() {
 	pb.RegisterGoodServer(grpcServer, service.NewGoodService())
 
 	//etcd服务注册
-	ser, err := etcd.NewServiceRegister(EndPoints, SerName, Addr, 10)
+	ser, err := etcd.NewServiceRegister(EndPoints, SerName, Addr, 60)
 	if err != nil {
 		log.Fatalf("etcd NewServiceRegister err: %v", err)
 	}
