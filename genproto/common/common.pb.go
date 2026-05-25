@@ -80,6 +80,7 @@ type CreateUserRequest struct {
 	Address       string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
 	Email         string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
 	Passwd        string                 `protobuf:"bytes,5,opt,name=passwd,proto3" json:"passwd,omitempty"`
+	Page          []int32                `protobuf:"varint,6,rep,packed,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -149,6 +150,13 @@ func (x *CreateUserRequest) GetPasswd() string {
 	return ""
 }
 
+func (x *CreateUserRequest) GetPage() []int32 {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
 type GetUserInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -206,6 +214,7 @@ type CreateUserResponse struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Phone         string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	Page          []int32                `protobuf:"varint,4,rep,packed,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -259,6 +268,13 @@ func (x *CreateUserResponse) GetPhone() string {
 		return x.Phone
 	}
 	return ""
+}
+
+func (x *CreateUserResponse) GetPage() []int32 {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 type GetUserResponse struct {
@@ -709,20 +725,22 @@ var File_common_common_proto protoreflect.FileDescriptor
 
 const file_common_common_proto_rawDesc = "" +
 	"\n" +
-	"\x13common/common.proto\x12\x06common\"\x85\x01\n" +
+	"\x13common/common.proto\x12\x06common\"\x99\x01\n" +
 	"\x11CreateUserRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x18\n" +
 	"\aaddress\x18\x03 \x01(\tR\aaddress\x12\x14\n" +
 	"\x05email\x18\x04 \x01(\tR\x05email\x12\x16\n" +
-	"\x06passwd\x18\x05 \x01(\tR\x06passwd\">\n" +
+	"\x06passwd\x18\x05 \x01(\tR\x06passwd\x12\x12\n" +
+	"\x04page\x18\x06 \x03(\x05R\x04page\">\n" +
 	"\x12GetUserInfoRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
-	"\x05phone\x18\x02 \x01(\tR\x05phone\"N\n" +
+	"\x05phone\x18\x02 \x01(\tR\x05phone\"b\n" +
 	"\x12CreateUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
-	"\x05phone\x18\x03 \x01(\tR\x05phone\"K\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x12\n" +
+	"\x04page\x18\x04 \x03(\x05R\x04page\"K\n" +
 	"\x0fGetUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +

@@ -103,11 +103,11 @@ func main() {
 	}
 	defer conn.Close()
 
-	//UserService()
+	UserService()
 	//ListValue()
 
 	//Upload()
-	conversations(ctx)
+	//conversations(ctx)
 	//CreateGood()
 }
 
@@ -177,6 +177,7 @@ func UserService() {
 		Phone:   "13800138000",
 		Address: "XXXXXXX",
 		Passwd:  "123456",
+		Page:    []int32{1, 2, 3, 4, 5, 6, 7, 8, 9},
 	})
 	if err != nil {
 		grpclog.Fatalf("fail to create user: %v", err)

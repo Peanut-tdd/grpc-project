@@ -25,6 +25,7 @@ func (u userService) CreateUser(ctx context.Context, rq *common.CreateUserReques
 		Id:    1,
 		Name:  rq.Name,
 		Phone: rq.Phone,
+		Page:  rq.Page,
 	}
 
 	middleware.CtxInfof(ctx, "user info:%v", res)

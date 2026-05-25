@@ -13,6 +13,7 @@ message CreateUserRequest{
   string address=3;
   string email=4;
   string passwd=5;
+  repeated int32 page=6;
 }
 
 
@@ -26,6 +27,7 @@ message CreateUserResponse{
   int64 id=1;
   string name=2;
   string phone=3;
+  repeated int32 page=4;
 }
 
 
