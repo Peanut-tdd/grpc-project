@@ -4,22 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"log"
-	"strconv"
-
 	"github.com/pbuser/client/auth"
 	"github.com/pbuser/client/etcd"
+	"github.com/pbuser/client/router"
 	clienttrace "github.com/pbuser/client/trace"
 	"github.com/pbuser/client/zap"
-	common "github.com/pbuser/genproto/common"
 	pb "github.com/pbuser/genproto/user"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/resolver"
+	"log"
+	"net/http"
 )
 
 var (
@@ -103,12 +100,18 @@ func main() {
 	}
 	defer conn.Close()
 
-	UserService()
-	//ListValue()
+	mux := router.RegisterRoutes(&router.Clients{
+		UserClient:       uGrpcClient,
+		StreamClient:     sGrpcClient,
+		UploadClient:     cGrpcClient,
+		BothStreamClient: bothGrpcClient,
+		GoodClient:       gGrpcClient,
+	})
 
-	//Upload()
-	//conversations(ctx)
-	//CreateGood()
+	if err := http.ListenAndServe(":8081", mux); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
+
 }
 
 func initClient(ctx context.Context) (*grpc.ClientConn, error) {
@@ -168,143 +171,4 @@ func initClient(ctx context.Context) (*grpc.ClientConn, error) {
 	gGrpcClient = pb.NewGoodClient(connect)
 
 	return connect, nil
-}
-
-// 一元rpc
-func UserService() {
-	resp, err := uGrpcClient.CreateUser(context.Background(), &common.CreateUserRequest{
-		Name:    "John Doe",
-		Phone:   "13800138000",
-		Address: "XXXXXXX",
-		Passwd:  "123456",
-		Page:    []int32{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	})
-	if err != nil {
-		grpclog.Fatalf("fail to create user: %v", err)
-	}
-
-	r, _ := json.Marshal(resp)
-	fmt.Printf("create user resp:%v\n", string(r))
-
-	resp1, err := uGrpcClient.GetUserInfo(context.Background(), &common.GetUserInfoRequest{
-		Name:  "John Doe",
-		Phone: "13800138000",
-	})
-	if err != nil {
-		grpclog.Fatalf("fail to get user info: %v", err)
-	}
-
-	r1, _ := json.Marshal(resp1)
-	fmt.Printf("get user resp:%v\n", string(r1))
-}
-
-// 服务端流式
-func ListValue() {
-
-	req := &common.SimpleRequest{
-		Data: "stream server start...",
-	}
-
-	stream, err := sGrpcClient.ListValue(context.Background(), req)
-	if err != nil {
-		grpclog.Fatalf("fail to list value: %v", err)
-	}
-
-	for {
-		//Recv() 方法接收服务端消息，默认每次Recv()最大消息长度为`1024*1024*4`bytes(4M)
-		resp, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			grpclog.Fatalf("fail to list value: %v", err)
-		}
-		fmt.Printf("get value resp:%v\n", resp.StreamValue)
-
-	}
-
-	stream.CloseSend()
-}
-
-// 客户端流式
-func Upload() {
-	stream, err := cGrpcClient.Upload(context.Background())
-	if err != nil {
-		log.Fatalf("fail to upload: %v", err)
-	}
-
-	for i := 0; i < 10; i++ {
-		err = stream.Send(&common.StreamRequest{StreamData: "stream client rpc" + strconv.Itoa(i)})
-		if err != nil {
-			log.Fatalf("fail to upload: %v", err)
-		}
-	}
-
-	res, err := stream.CloseAndRecv()
-	if err != nil {
-		log.Fatalf("fail to upload: %v", err)
-	}
-
-	log.Printf("upload resp:%v\n", res)
-
-}
-
-// 双向流式
-func conversations(ctx context.Context) {
-
-	ctx = clienttrace.FuncCall(ctx, "conversations")
-
-	stream, err := bothGrpcClient.Conversations(ctx)
-
-	if err != nil {
-		grpclog.Fatalf("fail to conversations: %v", err)
-	}
-
-	for i := 0; i < 10; i++ {
-		err = stream.Send(&common.StreamReq{
-			Question: "stream client rpc" + strconv.Itoa(i),
-		})
-		if err != nil {
-			grpclog.Fatalf("fail to conversations: %v", err)
-		}
-
-		res, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			grpclog.Fatalf("fail to conversations: %v", err)
-		}
-
-		fmt.Printf("conversations resp:%v\n", res.Answer)
-
-		zap.CtxInfof(ctx, "conversations resp:%v", res.Answer)
-
-	}
-
-	err = stream.CloseSend()
-	if err != nil {
-		grpclog.Fatalf("fail to conversations: %v", err)
-	}
-
-}
-
-func CreateGood() {
-	req := &common.CreateGoodReq{
-		Good: map[string]string{
-			"name":  "Apple 18 ProMax",
-			"sku":   "00001",
-			"price": "18000",
-		},
-		Tags: []common.Tags{common.Tags_Tag_Elec, common.Tags_Tag_Hot},
-	}
-
-	resp, err := gGrpcClient.CreateGood(context.Background(), req)
-	if err != nil {
-		grpclog.Fatalf("fail to create good: %v", err)
-	}
-
-	js, _ := json.Marshal(resp)
-	fmt.Printf("create good resp:%v\n", string(js))
 }
