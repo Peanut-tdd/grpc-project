@@ -1,0 +1,17 @@
+# Binary
+grpc-server
+server
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+
+# Logs
+log/
+*.log
+
+# Claude
+CLAUDE.md

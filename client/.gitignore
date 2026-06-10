@@ -1,0 +1,17 @@
+# Binary
+grpc-client
+client
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+
+# Logs
+log/
+*.log
+
+# Claude
+CLAUDE.md
