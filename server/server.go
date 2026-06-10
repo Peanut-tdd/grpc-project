@@ -15,7 +15,6 @@ import (
 	"time"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	pb "github.com/pbuser/genproto/user"
 	"github.com/pbuser/server/middleware"
 	"github.com/pbuser/server/service"
@@ -64,14 +63,14 @@ func main() {
 		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 			middleware.TimeoutStreamInterceptor(DefaultTimeout),
-			grpc_auth.StreamServerInterceptor(middleware.AuthInterceptor),
+			middleware.AuthStreamInterceptor(),
 
 			//记录全局日志
 			//grpc_zap.StreamServerInterceptor(zaplogger),
 		)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			middleware.TimeoutUnaryInterceptor(DefaultTimeout),
-			grpc_auth.UnaryServerInterceptor(middleware.AuthInterceptor),
+			middleware.AuthUnaryInterceptor(),
 			//	grpc_zap.UnaryServerInterceptor(zaplogger),
 		)),
 	)
