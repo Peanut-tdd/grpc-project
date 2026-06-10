@@ -18,6 +18,9 @@ import (
 )
 
 // ServiceContext 聚合 gRPC 连接及所有服务客户端
+
+var AuthServices = []string{"UserService", "StreamService", "StreamClient", "Stream"}
+
 type ServiceContext struct {
 	Conn *grpc.ClientConn
 
@@ -62,7 +65,7 @@ func (s *selectiveAuth) GetRequestMetadata(ctx context.Context, uri ...string) (
 // matchService 检查 RPC URI 对应的服务是否需要认证
 func (s *selectiveAuth) matchService(uri string) bool {
 	for svc := range s.services {
-		if strings.Contains(uri, "."+svc+"/") {
+		if strings.Contains(uri, svc) {
 			return true
 		}
 	}
@@ -87,8 +90,8 @@ func NewServiceContext(ctx context.Context, etcdEndpoints []string, authServices
 	fmt.Printf("tokens: %v\n", string(b))
 
 	// 构建需要认证的服务集合
-	svcSet := make(map[string]bool, len(authServices))
-	for _, s := range authServices {
+	svcSet := make(map[string]bool, len(AuthServices))
+	for _, s := range AuthServices {
 		svcSet[s] = true
 	}
 

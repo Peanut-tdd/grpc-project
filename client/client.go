@@ -25,7 +25,7 @@ func main() {
 	ctx = clienttrace.FuncCall(ctx, "main")
 
 	//服务发现，指定需要认证的服务（不传则所有服务都需要认证）
-	svcCtx, err := svc.NewServiceContext(ctx, EtcdEndpoints, "UserService", "StreamService", "StreamClient", "Stream")
+	svcCtx, err := svc.NewServiceContext(ctx, EtcdEndpoints)
 	if err != nil {
 		log.Fatalf("failed to initialize service context: %v", err)
 	}
